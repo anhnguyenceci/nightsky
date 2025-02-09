@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galaxy Animation</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: black;
+        }
+        .galaxy {
+            position: absolute;
+            width: 100vw;
+            height: 100vh;
+        }
+        .star {
+            position: absolute;
+            background: white;
+            width: 2px;
+            height: 2px;
+            border-radius: 50%;
+            opacity: 0.8;
+            animation: twinkle 2s infinite alternate;
+            transition: transform 0.3s ease-out;
+        }
+        @keyframes twinkle {
+            0% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="galaxy" id="galaxy"></div>
+    <script>
+        function createStars(numStars) {
+            const galaxy = document.getElementById("galaxy");
+            for (let i = 0; i < numStars; i++) {
+                let star = document.createElement("div");
+                star.classList.add("star");
+                let x = Math.random() * window.innerWidth;
+                let y = Math.random() * window.innerHeight;
+                let size = Math.random() * 3 + 1;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.left = `${x}px`;
+                star.style.top = `${y}px`;
+                star.style.animationDuration = `${Math.random() * 3 + 1}s`;
+                galaxy.appendChild(star);
+            }
+        }
+        
+        function moveStarsAway(event) {
+            const stars = document.querySelectorAll(".star");
+            const mouseX = event.clientX;
+            const mouseY = event.clientY;
+            const radius = 30; // Bán kính 1cm (10px)
+            
+            stars.forEach(star => {
+                const starX = parseFloat(star.style.left);
+                const starY = parseFloat(star.style.top);
+                const dx = starX - mouseX;
+                const dy = starY - mouseY;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance < radius) {
+                    const angle = Math.atan2(dy, dx);
+                    const newX = starX + Math.cos(angle) * radius;
+                    const newY = starY + Math.sin(angle) * radius;
+                    star.style.transform = `translate(${newX - starX}px, ${newY - starY}px)`;
+                } else {
+                    star.style.transform = "translate(0, 0)";
+                }
+            });
+        }
+        
+        document.addEventListener("mousemove", moveStarsAway);
+        createStars(1500);
+    </script>
+</body>
+</html>
